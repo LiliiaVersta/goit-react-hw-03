@@ -1,53 +1,53 @@
 import { useState, useEffect } from "react";
-import Description from "./components/Description/Description";
-import Feedback from "./components/Feedback/Feedback";
-import Options from "./components/Options/Options";
-import Notification from "./components/Notification/Notification";
+import ContactForm from "./components/ContactForm/ContactForm";
+import SearchBox from "./components/SearchBox/SearchBox";
+import ContactList from "./components/ContactList/ContactList";
+import contacts from "./contacts.json"
+
 
 export const App = () => {
-  const [feedback, setFeedback] = useState(()=>{
-    const saveData = JSON.parse(localStorage.getItem('feedbacks'))
-  if (saveData !== null) {
-    return saveData
-  };
-  return {good: 0, neutral: 0, bad: 0}
-})
-  let totalFeedback = feedback.good + feedback.neutral + feedback.bad;
-  let positive = Math.round((feedback.good / totalFeedback) * 100);
- const updateFeedback = (feedbackType) => {
-    setFeedback((f) => {
-      return { ...f, [feedbackType]: f[feedbackType] + 1 };
-    });
-  };
+  const [users, setUsers] = useState(() => {
+    const localStorageContacts = JSON.parse(localStorage.getItem("contacts"));
+    if (localStorageContacts ) {
+      return [...localStorageContacts ];
+    }
+    return [...contacts];
+  })
+  const [filtered, setFiltered] = useState([])
+  const [filter, setFilter] = useState('')
+  const handelChangeFilter = (event) => {
+    setFilter(event.target.value.toLowerCase());
+  }
+    useEffect(() => {
+    localStorage.setItem("contacts", JSON.stringify(users));
+  }, [users]);
 
-useEffect(() => {
-localStorage.setItem('feedbacks', JSON.stringify(feedback))
-  }, [feedback]);
-  
-
- const handleResetClick = () => {
-    localStorage.setItem(
-      "feedbacks",
-      JSON.stringify({ good: 0, neutral: 0, bad: 0 })
-    );
-    setFeedback({ good: 0, neutral: 0, bad: 0 });
-  };
-
-
-  let feedbackOrNotification = totalFeedback ? (
-    <Feedback data={feedback} positive={positive} total={totalFeedback} />
-  ) : (
-    <Notification />
-  );
+  useEffect(() => {
+    if (!filter) {
+      setFiltered(users);
+    } else {
+      let filtered = users.filter((itm) => {
+        return itm.name.toLowerCase().includes(filter);
+      });
+      setFiltered([...filtered]);
+    }
+  }, [filter, users]);
+  const addContact = (newContact) => {
+    setUsers((u)=>[...u, newContact]
+    )
+  }
+  const handleDeleteContact = (id) => {
+		setUsers((u) =>
+			u.filter((itm) => itm.id !== id)
+		);
+	}
   return (
-    <>
-      <Description />
-      <Options
-        total={totalFeedback}
-        handleResetClick={handleResetClick}
-        updateFeedback={updateFeedback}
-      />
-      {feedbackOrNotification}
-    </>
-  );
+  <div>
+  <h1>Phonebook</h1>
+      <ContactForm add={addContact} />
+      <SearchBox filter={filter} changeFilterHandler={handelChangeFilter} />
+      <ContactList contacts={filtered} onDelete={handleDeleteContact}/>
+</div>
+
+)
 };
