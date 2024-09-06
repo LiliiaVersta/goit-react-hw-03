@@ -31,7 +31,6 @@ const ContactForm = ({add}) => (
           add(contact)
       }}
     >
-      {({ isSubmitting }) => (
                 <Form className={styles.formContact}>
                     <label className={styles.formLabel}>
 						Name
@@ -47,11 +46,11 @@ const ContactForm = ({add}) => (
                         <Field className={styles.formInput} type="text" name="number" />
                         <ErrorMessage className={styles.formErrorMessage} name="number" component="div" />
                     </div>
-          <button className={styles.formButton} type="submit" disabled={isSubmitting}>
+          <button className={styles.formButton} type="submit" >
             Add contact
           </button>
         </Form>
-      )}
+      
     </Formik>
   </div>
 );

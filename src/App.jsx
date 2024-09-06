@@ -13,25 +13,27 @@ export const App = () => {
     }
     return [...contacts];
   })
-  const [filtered, setFiltered] = useState([])
+  // const [filtered, setFiltered] = useState([])
   const [filter, setFilter] = useState('')
   const handelChangeFilter = (event) => {
     setFilter(event.target.value.toLowerCase());
   }
     useEffect(() => {
     localStorage.setItem("contacts", JSON.stringify(users));
-  }, [users]);
+    }, [users])
+  const filtered = users.filter((itm) => {
 
-  useEffect(() => {
-    if (!filter) {
-      setFiltered(users);
-    } else {
-      let filtered = users.filter((itm) => {
-        return itm.name.toLowerCase().includes(filter);
-      });
-      setFiltered([...filtered]);
-    }
-  }, [filter, users]);
+    return itm.name.toLowerCase().includes(filter) });
+  // useEffect(() => {
+  //   if (!filter) {
+  //     setFiltered(users);
+  //   } else {
+  //     let filtered = users.filter((itm) => {
+  //       return itm.name.toLowerCase().includes(filter);
+  //     });
+  //     setFiltered([...filtered]);
+  //   }
+  // }, [filter, users]);
   const addContact = (newContact) => {
     setUsers((u)=>[...u, newContact]
     )
